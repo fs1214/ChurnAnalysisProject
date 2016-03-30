@@ -39,7 +39,7 @@ def LRValAUC(X_tr, Y_tr, k, cs, class_weight):
                     fscore_aucs[(c, norm)] = [fscore[1]]
     return precision_aucs, recall_aucs, fscore_aucs
 
-def RFValAUC(X_tr, Y_tr, k, n_estimators, max_depth_list):
+def RFValAUC(X_tr, Y_tr, k, n_estimators, max_depth_list, class_weight):
     '''
     Perform k-fold cross validation on logistic regression, varies C and penalty Type (L1 or L2),
     returns a dictionary where key=c,value=[auc-c1, auc-c2, ...auc-ck].
@@ -58,7 +58,7 @@ def RFValAUC(X_tr, Y_tr, k, n_estimators, max_depth_list):
 
         for n in n_estimators:
             for max_depth in max_depth_list:
-                rf_clf = RandomForestClassifier(n_estimators=n,max_depth = max_depth, class_weight='balanced')
+                rf_clf = RandomForestClassifier(n_estimators=n,max_depth = max_depth, class_weight=class_weight)
                 rf_clf.fit(X_tr_f,Y_tr_f)
                 precision, recall, fscore, threshold = precision_recall_fscore_support(Y_va_f,rf_clf.predict(X_va_f))
 

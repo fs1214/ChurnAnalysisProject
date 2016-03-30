@@ -45,6 +45,25 @@ def evaluation_LR_models(X_train, X_test,y_train,y_test, best_params, class_weig
     precision, recall, fscore, threshold = precision_recall_fscore_support(y_test,y_pred)
     return y_pred, accu, precision[1],recall[1],fscore[1]
 
+def train_RF_models(X_train, y_train, k, n_estimators, max_depth_list, class_weight, evaluation_methods):
+    precision_accus, recall_accus, fscore_accus = Mod.RFValAUC(X_train[:,1:], y_train, k, n_estimators, max_depth_list, class_weight)
+    if evaluation_methods == 'precision':
+        best_params, mean_accu = obtain_best_pair(precision_accus)
+    elif evaluation_methods == 'recall':
+        best_params, mean_accu = obtain_best_pair(recall_accus)
+    else:
+        best_params, mean_accu = obtain_best_pair(fscore_accus)
+    return best_params, mean_accu
+
+def evaluation_RF_models(X_train, X_test,y_train,y_test, best_params, class_weight):
+    rf = RandomForestClassifier(n_estimators=best_params[0] ,max_depth = best_params[1], class_weight=class_weight)
+    rf.fit(X_train[:,1:], y_train)
+    y_pred = rf.predict(X_test[:,1:])
+    accu = (y_test == y_pred).mean()
+    precision, recall, fscore, threshold = precision_recall_fscore_support(y_test,y_pred)
+    return y_pred, accu, precision[1],recall[1],fscore[1]
+
+
 def possible_saving(y_pred, y_test, X_test):
     res_dict = {'ClientID':[], 'AvgMonthlyBilling':[]}
     for i in np.arange(len(y_test)):
@@ -55,6 +74,7 @@ def possible_saving(y_pred, y_test, X_test):
     return res_dict
 
 if __name__ == "__main__":
+    res_file = open("result.txt", 'a')
     filename = sys.argv[1]
     evaluation_methods = sys.argv[2]
     df = DP.read_file(filename)
@@ -65,10 +85,28 @@ if __name__ == "__main__":
 
     #Logistic Regression
     k = 10
-    cs = [10**i for i in np.arange(-5,5,0.5)]
-    class_weight = {0:0.25,1:0.75}
+    cs = [10**i for i in np.arange(-5,5,0.25)]
+    class_weight = {0:0.35,1:0.65}
     best_params, mean_accu = train_LR_models(X_train, y_train, k, cs, class_weight, evaluation_methods)
+    params_str = "Best paramters: C = {}, norm = l{}, class_weight = {}, measurement = {}".format(best_params[0], best_params[1], class_weight, evaluation_methods)
     y_pred_lr, accu, precision, recall, fscore = evaluation_LR_models(X_train, X_test,y_train,y_test, best_params, class_weight)
     lr_saving_res = possible_saving(y_pred_lr, y_test, X_test)
-    print accu, precision, recall, fscore, lr_saving_res
+    res_str = "Result: accuracy = {}, precision = {}, recall = {}, fscore = {}, num of TP = {}, PossibleMonthlyBilling = {}"\
+        .format(accu, precision, recall, fscore, len(lr_saving_res['ClientID']), sum(lr_saving_res['AvgMonthlyBilling']))
 
+    print params_str
+    print res_str
+    res_file.write("\n{}\n{}\n".format(params_str, res_str))
+    res_file.close()
+
+    #Random Forest
+    """
+    n_estimators = [200,500,800,1000,2000]
+    max_depth_list = [10,20,30,40]
+    k = 10
+    class_weight = {0:0.25,1:0.75}
+    best_params, mean_accu = train_RF_models(X_train, y_train, k, n_estimators, max_depth_list, class_weight, evaluation_methods)
+    y_pred_rf, accu, precision, recall, fscore = evaluation_RF_models(X_train, X_test,y_train,y_test, best_params, class_weight)
+    rf_saving_res = possible_saving(y_pred_rf, y_test, X_test)
+    print accu, precision, recall, fscore, rf_saving_res
+    """
