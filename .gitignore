@@ -1,4 +1,6 @@
 *.csv
 *.txt
+*.png
+*.pkl
 .DS_Store
 .idea

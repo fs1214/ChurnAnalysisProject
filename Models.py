@@ -9,7 +9,7 @@ from sklearn.tree import DecisionTreeClassifier
 def LRValAUC(X_tr, Y_tr, k, cs, class_weight):
     '''
     Perform k-fold cross validation on logistic regression, varies C and penalty Type (L1 or L2),
-    returns a dictionary where key=c,value=[auc-c1, auc-c2, ...auc-ck].
+    returns dictionary where key=(c,penalty type),value=[precision_1/recall_1/fscore_1, precision_2/recall_2/fscore_2, ..., precision_k/recall_k/fscore_k].
     '''
     cv = KFold(n=X_tr.shape[0], n_folds = k)
     precision_aucs = {}
@@ -41,8 +41,8 @@ def LRValAUC(X_tr, Y_tr, k, cs, class_weight):
 
 def RFValAUC(X_tr, Y_tr, k, n_estimators, max_depth_list, class_weight):
     '''
-    Perform k-fold cross validation on logistic regression, varies C and penalty Type (L1 or L2),
-    returns a dictionary where key=c,value=[auc-c1, auc-c2, ...auc-ck].
+    Perform k-fold cross validation on random forest, varies n_estimators and max_depth,
+    returns dictionary where key=(n_estimators, max_depth),value=[precision_1/recall_1/fscore_1, precision_2/recall_2/fscore_2, ..., precision_k/recall_k/fscore_k].
     '''
     cv = KFold(n=X_tr.shape[0], n_folds = k)
     precision_aucs = {}
