@@ -2,5 +2,7 @@
 *.txt
 *.png
 *.pkl
+*.ipynb
 .DS_Store
 .idea
+

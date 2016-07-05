@@ -41,15 +41,17 @@ def clean_data(df):
 
     #Validate RecentContractType/FirstContractType field, e.g. replace 12C with 12M. Create dummy variables from this categorical column and add them to the dataframe
     df.loc[df['RecentContractType']=='12C','RecentContractType']= '12M'
+    df.loc[df['RecentContractType']=='14M','RecentContractType']= '12M'
     df.loc[df['RecentContractType']=='36C','RecentContractType']= '36M'
     df.loc[df['RecentContractType']=='M36','RecentContractType']= '36M'
     recent_contract_dummy = pd.get_dummies(df['RecentContractType'])
-    recent_contract_dummy.columns = ['No Recent Contract','12M Recent Contract','24M Recent Contract','36M Recent Contract','MTM Recent Contract_dummy.columns']
+    recent_contract_dummy.columns = ['No Recent Contract','12M Recent Contract','24M Recent Contract','36M Recent Contract','MTM Recent Contract']
     df = pd.concat([df,recent_contract_dummy], axis=1)
 
     df.loc[df['FirstContractType']=='12C','FirstContractType']= '12M'
     df.loc[df['FirstContractType']=='14M','FirstContractType']= '12M'
     df.loc[df['FirstContractType']=='M36','FirstContractType']= '36M'
+    df.loc[df['FirstContractType']=='36C','FirstContractType']= '36M'
     first_contract_dummy = pd.get_dummies(df['FirstContractType'])
     first_contract_dummy.columns = ['No First Contract','12M First Contract','24M First Contract','36M First Contract','MTM First Contract']
     df = pd.concat([df,first_contract_dummy], axis=1)
@@ -71,6 +73,7 @@ def clean_data(df):
     df['SAAvgResolvingDays'] = df['SAAvgResolvingDays']/df['AvgMonthlyBilling']
     df['CreditAmt'] = df['CreditAmt']/df['AvgMonthlyBilling']
     df['CreditReqCnt'] = df['CreditReqCnt']/df['AvgMonthlyBilling']
+    df['RangeOfBilling'] = df['RangeOfBilling']/df['AvgMonthlyBilling']
     
     #Deal with nan and infinity values.
     df.replace(np.inf, 0, inplace=True)

@@ -24,7 +24,7 @@ def construct_X_y(df, threshold):
     y[y <= threshold] = 0
     X = df.drop(['ChurnRate','ClientName','MaxLineCount','Industry','RecentContractType','FirstContractType','NumOfFCTickets','NumOfHDTickets',
                  'NumOfSATickets','FCLinesAffected','HDLinesAffected','SALinesAffected','FCAvgResolvingDays',
-                 'HDAvgResolvingDays','SAAvgResolvingDays', 'StartDate','EndDate'], 1)
+                 'HDAvgResolvingDays','SAAvgResolvingDays', 'StartDate','EndDate','IndOfAlrChurned'], 1)
     return X, y
 
 
@@ -125,7 +125,7 @@ def evaluation_RF_models(X_train, X_test,y_train,y_test, best_params, class_weig
     precision, recall, fscore, threshold = precision_recall_fscore_support(y_test,y_pred)
     
     #Plot top 20 important features
-    #plot_RF_feature_importance(feature_names, rf.feature_importances_, 20)
+    plot_RF_feature_importance(feature_names, rf.feature_importances_, 20)
     return y_pred, accu, precision[1],recall[1],fscore[1]
 
 """
@@ -185,7 +185,7 @@ if __name__ == "__main__":
     feature_names = X.columns.values
 
     #Logistic Regression
-    
+    """
     k = 10
     cs = [10**i for i in np.arange(-3,3,1)]
     class_weight = {0:0.5, 1:0.5}
@@ -205,7 +205,7 @@ if __name__ == "__main__":
     
     #Random Forest
     
-    n_estimators = [100]
+    n_estimators = [100,500]
     max_depth_list = [10,20,30,40]
     k = 10
     class_weight = {0:0.5,1:0.5}
@@ -222,4 +222,4 @@ if __name__ == "__main__":
     
     res_file.write("\n{}\n{}\n".format(params_str, res_str))
     res_file.close()
-    """
+    
