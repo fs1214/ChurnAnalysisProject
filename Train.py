@@ -199,6 +199,8 @@ if __name__ == "__main__":
     print params_str
     print res_str
     
+    res_file.write("\n{}\n{}\n".format(params_str, res_str))
+    res_file.close()
     """
     
     #Random Forest
@@ -216,7 +218,8 @@ if __name__ == "__main__":
 
     print params_str
     print res_str
-    """
+    
     
     res_file.write("\n{}\n{}\n".format(params_str, res_str))
     res_file.close()
+    """
