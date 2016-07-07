@@ -88,4 +88,4 @@ if __name__ == "__main__":
     filename = sys.argv[1]
     df = read_file(filename)
     processed_df = clean_data(df)
-    processed_df.to_csv('clean_data.csv')
+    processed_df.to_csv('clean_data_20140701.csv')

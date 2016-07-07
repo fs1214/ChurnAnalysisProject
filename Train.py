@@ -12,7 +12,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.tree import DecisionTreeClassifier
 import pickle
 import matplotlib.pyplot as plt
-
+import csv
 
 """
 Given a threshold, if churn rate is more than that, we regard this customer as churn(y = 1); otherwise not churn(y = 0).
@@ -187,8 +187,8 @@ if __name__ == "__main__":
     #Logistic Regression
     """
     k = 10
-    cs = [10**i for i in np.arange(-3,3,1)]
-    class_weight = {0:0.5, 1:0.5}
+    cs = [10**i for i in np.arange(-4,5,1)]
+    class_weight = {0:0.3, 1:0.7}
     best_params, mean_accu = train_LR_models(X_train, y_train, k, cs, class_weight, evaluation_methods)
     params_str = "Best paramters: C = {}, norm = l{}, class_weight = {}, measurement = {}".format(best_params[0], best_params[1], class_weight, evaluation_methods)
     y_pred_lr, accu, precision, recall, fscore = evaluation_LR_models(X_train, X_test,y_train,y_test, best_params, class_weight)
@@ -199,14 +199,21 @@ if __name__ == "__main__":
     print params_str
     print res_str
     
+    f = open('ChurnClient.csv', "wb")
+    writer = csv.writer(f)
+    writer.writerow(['ClientID','AvgMonthlyBilling'])
+    for i in range(len(lr_saving_res['ClientID'])):
+        writer.writerow([lr_saving_res['ClientID'][i],lr_saving_res['AvgMonthlyBilling'][i]])
+    f.close()
+    
     res_file.write("\n{}\n{}\n".format(params_str, res_str))
     res_file.close()
     """
     
     #Random Forest
     
-    n_estimators = [100,500]
-    max_depth_list = [10,20,30,40]
+    n_estimators = [100,500,900]
+    max_depth_list = [10,20,30]
     k = 10
     class_weight = {0:0.5,1:0.5}
     best_params, mean_accu = train_RF_models(X_train, y_train, k, n_estimators, max_depth_list, class_weight, evaluation_methods)
@@ -215,7 +222,15 @@ if __name__ == "__main__":
     rf_saving_res = possible_saving(y_pred_rf, y_test, X_test)
     res_str = "Result: accuracy = {}, precision = {}, recall = {}, fscore = {}, num of TP = {}, PossibleMonthlyBilling = {}"\
         .format(accu, precision, recall, fscore, len(rf_saving_res['ClientID']), sum(rf_saving_res['AvgMonthlyBilling']))
-
+    
+    f = open('ChurnClient.csv', "wb")
+    writer = csv.writer(f)
+    writer.writerow(['ClientID','AvgMonthlyBilling'])
+    for i in range(len(rf_saving_res['ClientID'])):
+        writer.writerow([rf_saving_res['ClientID'][i],rf_saving_res['AvgMonthlyBilling'][i]])
+    f.close()
+    
+    
     print params_str
     print res_str
     

@@ -12,7 +12,7 @@ from sklearn.metrics import precision_recall_fscore_support
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.tree import DecisionTreeClassifier
 import pickle
-
+import csv
 
 if __name__ == "__main__":
     
@@ -41,5 +41,12 @@ if __name__ == "__main__":
     potential_saving = Tr.possible_saving(y_pred, y.values, X.values)
     res_str = "Result: accuracy = {}, precision = {}, recall = {}, fscore = {}, num of TP = {}, PossibleMonthlyBilling = {}"\
         .format(accu, precision[1], recall[1], fscore[1], len(potential_saving['ClientID']), sum(potential_saving['AvgMonthlyBilling']))
-
+    
+    f = open('ChurnClient.csv', "wb")
+    writer = csv.writer(f)
+    writer.writerow(['ClientID','AvgMonthlyBilling'])
+    for i in range(len(potential_saving['ClientID'])):
+        writer.writerow([potential_saving['ClientID'][i],potential_saving['AvgMonthlyBilling'][i]])
+    f.close()
+    
     print res_str
